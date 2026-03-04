@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efir Yağı Maya Qiyməti</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bg:#f4f1eb; --bg2:#fff; --bg3:#eceae3;
+  --text:#1c1c1c; --text2:#666; --border:#ddd8ce;
+  --green:#1f4d35; --gm:#2d6a4f; --gl:#52b788; --gp:#d8f3dc;
+  --gold:#b8820a; --goldl:#f0c040;
+  --red:#c0392b; --blue:#1a4fa0;
+  --shadow:0 2px 16px rgba(0,0,0,0.07);
+  --r:14px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#141a14; --bg2:#1e2a1e; --bg3:#263226;
+    --text:#e8e8e0; --text2:#9aaa96; --border:#2e3e2e;
+    --green:#52b788; --gm:#74c69d; --gl:#95d5b2; --gp:#1a3328;
+    --gold:#f0c040; --goldl:#ffe082;
+    --red:#e57373; --blue:#7baff5;
+    --shadow:0 2px 16px rgba(0,0,0,0.4);
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+
+/* HEADER */
+header{background:var(--green);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.h-left{display:flex;align-items:center;gap:12px;}
+.h-icon{font-size:24px;background:rgba(255,255,255,0.12);width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+header h1{font-family:'Lora',serif;font-size:18px;color:#fff;line-height:1.2;}
+header p{color:rgba(255,255,255,0.5);font-size:11px;margin-top:2px;}
+.lang-switcher{display:flex;gap:4px;}
+.lang-btn{padding:5px 10px;border-radius:6px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.75);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.lang-btn.active{background:rgba(255,255,255,0.22);color:#fff;border-color:rgba(255,255,255,0.5);}
+
+/* LAYOUT */
+.wrap{max-width:1280px;margin:0 auto;padding:20px;display:grid;grid-template-columns:430px 1fr;gap:20px;align-items:start;}
+
+/* CARD */
+.card{background:var(--bg2);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.card-head h2{font-family:'Lora',serif;font-size:15px;color:var(--text);}
+.ci{width:28px;height:28px;background:var(--gp);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.card-body{padding:18px;}
+
+/* FORM */
+.flabel{display:block;font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:5px;}
+.fg{margin-bottom:14px;}
+.sw{position:relative;}
+.sw::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:11px;pointer-events:none;}
+select,input[type="number"]{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);background:var(--bg);outline:none;appearance:none;transition:border-color .2s,box-shadow .2s;}
+select:focus,input[type="number"]:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(82,183,136,0.15);background:var(--bg2);}
+
+/* MULTI-PLANT ROWS */
+.plant-rows{display:flex;flex-direction:column;gap:12px;}
+.plant-row{background:var(--bg3);border-radius:10px;padding:12px;position:relative;}
+.plant-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.row-num{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;}
+.btn-remove-row{background:none;border:none;color:var(--red);cursor:pointer;font-size:15px;padding:2px 6px;border-radius:5px;line-height:1;}
+.plant-row-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.plant-row-grid .fg{margin-bottom:0;}
+.qty-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+
+/* MINI RESULT */
+.mini-res{background:var(--green);border-radius:8px;padding:10px 12px;margin-top:8px;display:none;animation:fi .2s ease;}
+.mini-res.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.mrow{display:flex;justify-content:space-between;padding:2px 0;font-size:11.5px;}
+.ml{color:rgba(255,255,255,0.6);}
+.mv{color:#fff;font-weight:600;}
+.mv.g{color:var(--goldl);}
+
+/* ADD ROW BUTTON */
+.btn-add-row{width:100%;padding:9px;border:1.5px dashed var(--border);border-radius:9px;background:none;color:var(--text2);font-family:'Nunito',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;margin-top:4px;}
+.btn-add-row:hover{border-color:var(--gl);color:var(--green);background:var(--gp);}
+
+/* SALES TOGGLE */
+.sales-toggle-row{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:9px 12px;background:var(--bg3);border-radius:8px;cursor:pointer;user-select:none;}
+.sales-toggle-row input[type="checkbox"]{width:15px;height:15px;accent-color:var(--gm);cursor:pointer;}
+.sales-toggle-row span{font-size:12px;font-weight:700;color:var(--text);}
+.sales-section{display:none;margin-top:8px;}
+.sales-section.on{display:block;}
+.sales-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.profit-box{background:var(--bg3);border-radius:8px;padding:11px 13px;margin-top:8px;}
+.profit-row{display:flex;justify-content:space-between;padding:3px 0;font-size:12px;}
+.profit-row .pl{color:var(--text2);}
+.profit-row .pv{font-weight:700;}
+.gain .pv{color:#27ae60;}
+.loss .pv{color:var(--red);}
+
+/* ADD TO LIST */
+.btn-add-list{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:14px;}
+.btn-add-list:hover{opacity:.88;}
+.btn-add-list:active{transform:scale(.98);}
+.btn-add-list:disabled{opacity:.35;cursor:not-allowed;}
+
+/* RIGHT PANEL */
+.right{display:flex;flex-direction:column;gap:16px;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{background:var(--bg3);padding:8px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:last-child{border:none;}
+tbody td{padding:9px 11px;}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700;background:var(--gp);color:var(--green);}
+.tag-b{background:#e8f0fe;color:var(--blue);}
+.btn-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px;}
+.btn-del:hover{background:rgba(192,57,43,0.1);}
+.empty{text-align:center;padding:40px 20px;color:var(--text2);}
+.empty .em{font-size:36px;margin-bottom:8px;}
+.empty p{font-size:12px;}
+
+.sum-bar{display:none;padding:13px 18px;background:var(--green);border-radius:0 0 var(--r) var(--r);margin-top:-1px;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;}
+.sum-bar.on{display:flex;}
+.sum-label{color:rgba(255,255,255,0.65);font-size:11px;}
+.sum-total{color:var(--goldl);font-family:'Lora',serif;font-size:20px;font-weight:700;}
+.btn-clear{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);padding:5px 11px;border-radius:6px;font-family:'Nunito',sans-serif;font-size:11px;cursor:pointer;}
+
+.share-bar{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--border);}
+.btn-share{padding:7px 14px;border-radius:7px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:border-color .15s,background .15s;}
+.btn-share:hover{border-color:var(--gl);background:var(--gp);}
+
+/* HOWTO */
+.howto{max-width:1280px;margin:0 auto 28px;padding:0 20px;}
+.ht-toggle{width:100%;background:none;border:none;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'Nunito',sans-serif;}
+.ht-left{display:flex;align-items:center;gap:8px;}
+.ht-left h3{font-family:'Lora',serif;font-size:14px;color:var(--text);}
+.chev{color:var(--text2);transition:transform .2s;font-size:11px;}
+.ht-toggle.open .chev{transform:rotate(180deg);}
+.ht-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+.ht-body.open{display:block;}
+.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:14px;}
+.step{background:var(--bg3);border-radius:8px;padding:11px 13px;display:flex;gap:9px;}
+.sn{width:24px;height:24px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.sc h4{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.sc p{font-size:11px;color:var(--text2);line-height:1.5;}
+.sc code{background:var(--gp);color:var(--green);padding:1px 4px;border-radius:3px;font-size:10px;}
+.note{margin-top:12px;background:#fff8e7;border-left:3px solid var(--gold);border-radius:6px;padding:10px 13px;font-size:11.5px;color:#6b4800;line-height:1.6;}
+@media(prefers-color-scheme:dark){.note{background:#2a2000;color:#d4a820;}}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.65);display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.on{display:flex;}
+.modal-box{background:var(--bg2);border-radius:14px;max-width:520px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.3);overflow:hidden;}
+.modal-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-head h3{font-family:'Lora',serif;font-size:15px;color:var(--text);}
+.btn-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2);}
+.modal-body{padding:16px 18px;}
+.modal-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.mtab{padding:6px 14px;border-radius:7px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.mtab.active{background:var(--green);color:#fff;border-color:var(--green);}
+
+/* PNG TAB */
+#shareCanvas{width:100%;border-radius:8px;border:1px solid var(--border);}
+.btn-dl{width:100%;padding:10px;border-radius:8px;background:var(--green);color:#fff;border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;}
+
+/* TEXT TAB */
+.text-preview{
+  background:var(--bg3);border-radius:8px;padding:14px;
+  font-family:'Nunito',sans-serif;font-size:12.5px;line-height:1.7;
+  color:var(--text);white-space:pre-wrap;word-break:break-word;
+  max-height:320px;overflow-y:auto;border:1px solid var(--border);
+  user-select:all;cursor:text;
+}
+.copy-hint{font-size:11px;color:var(--text2);margin-top:6px;text-align:center;}
+.btn-copy{width:100%;padding:10px;border-radius:8px;background:var(--green);color:#fff;border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-copy.copied{background:#27ae60;}
+
+/* REPORT for screenshot */
+#reportCard{position:absolute;left:-9999px;top:0;width:460px;background:#fff;border-radius:14px;overflow:hidden;font-family:'Nunito',sans-serif;}
+.rc-head{background:#1f4d35;padding:14px 18px;}
+.rc-title{color:#fff;font-family:'Lora',serif;font-size:15px;font-weight:700;}
+.rc-sub{color:rgba(255,255,255,0.5);font-size:10px;margin-top:2px;}
+.rc-body{padding:14px 18px 0;}
+.rc-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ede8;font-size:12px;}
+.rc-row:last-child{border:none;}
+.rc-lbl{color:#666;} .rc-val{font-weight:700;color:#1c1c1c;}
+.rc-foot{background:#1f4d35;margin:0 -18px -1px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;}
+.rc-foot span{color:rgba(255,255,255,0.65);font-size:11px;}
+.rc-foot strong{color:#f0c040;font-size:20px;font-family:'Lora',serif;}
+
+@media(max-width:800px){
+  .wrap{grid-template-columns:1fr;padding:12px;}
+  .howto{padding:0 12px;}
+  .plant-row-grid{grid-template-columns:1fr;}
+  .sales-grid{grid-template-columns:1fr;}
+  .qty-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-left">
+    <div class="h-icon">🌿</div>
+    <div>
+      <h1 data-t="title">Efir Yağı Maya Qiyməti</h1>
+      <p data-t="subtitle">Real istehsal məlumatları əsasında</p>
+    </div>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('az')">AZ</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- LEFT -->
+  <div class="card">
+    <div class="card-head"><div class="ci">⚗️</div><h2 data-t="newCalc">Yeni Hesablama</h2></div>
+    <div class="card-body">
+      <div class="plant-rows" id="plantRows"></div>
+      <button class="btn-add-row" id="btnAddRow" onclick="addPlantRow()">＋ <span data-t="addPlant">Bitki əlavə et</span></button>
+
+      <label class="sales-toggle-row" for="salesChk" style="margin-top:16px;">
+        <input type="checkbox" id="salesChk">
+        <span data-t="salesToggle">💰 Satış qiyməti hesabla</span>
+      </label>
+      <div class="sales-section" id="salesSec">
+        <div class="sales-grid">
+          <div class="fg"><label class="flabel" data-t="salePriceLbl">Satış qiyməti (1 ml)</label><input type="number" id="salePrice" placeholder="AZN" min="0" step="0.01" oninput="updateProfit()"></div>
+          <div class="fg"><label class="flabel" data-t="saleQtyLbl">Satış miqdarı (ml)</label><input type="number" id="saleQty" placeholder="ml" min="0" step="1" oninput="updateProfit()"></div>
+        </div>
+        <div class="profit-box" id="profitBox" style="display:none">
+          <div class="profit-row"><span class="pl" data-t="pCostLbl">Maya xərci</span><span class="pv" id="pCost">—</span></div>
+          <div class="profit-row"><span class="pl" data-t="pRevLbl">Satış gəliri</span><span class="pv" id="pRev">—</span></div>
+          <div class="profit-row" id="pGainRow"><span class="pl" data-t="pGainLbl">Mənfəət / Zərər</span><span class="pv" id="pGain">—</span></div>
+          <div class="profit-row"><span class="pl" data-t="pMarginLbl">Gəlirlilik</span><span class="pv" id="pMargin">—</span></div>
+        </div>
+      </div>
+
+      <button class="btn-add-list" id="btnAddList" onclick="addToList()" disabled data-t="addToList">+ Siyahıya əlavə et</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="card">
+      <div class="card-head"><div class="ci">📋</div><h2 data-t="listTitle">Hesablama Siyahısı</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th data-t="thPlant">Bitki</th>
+            <th data-t="thTank">Avadanlıq</th>
+            <th data-t="thOil">Çıxış (ml)</th>
+            <th data-t="thQty">Miqdar (ml)</th>
+            <th data-t="th1ml">1ml (AZN)</th>
+            <th data-t="thTotal">Cəmi (AZN)</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="listBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState">
+          <div class="em">🌱</div>
+          <p data-t="emptyText">Hələ hesablama əlavə edilməyib.</p>
+        </div>
+      </div>
+      <div class="sum-bar" id="sumBar">
+        <div>
+          <div class="sum-label" data-t="grandLbl">Ümumi Cəm</div>
+          <div class="sum-total" id="grandTotal">0.00 AZN</div>
+        </div>
+        <button class="btn-clear" id="btnClear" onclick="clearList()" data-t="clearBtn">🗑 Təmizlə</button>
+      </div>
+      <div class="share-bar" id="shareBar" style="display:none">
+        <button class="btn-share" onclick="openShare('png')">📸 <span data-t="sharePng">PNG Paylaş</span></button>
+        <button class="btn-share" onclick="openShare('text')">📋 <span data-t="shareText">Mətn Kopyala</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="howto">
+  <div class="card">
+    <button class="ht-toggle" id="htToggle" onclick="this.classList.toggle('open');document.getElementById('htBody').classList.toggle('open')">
+      <div class="ht-left"><div class="ci">📊</div><h3 data-t="howTitle">Hesablama Qaydası</h3></div>
+      <span class="chev">▾</span>
+    </button>
+    <div class="ht-body" id="htBody">
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div class="sc"><h4 data-t="s1h">İşçi maaşı payı</h4><p data-t="s1p">Aylıq 842 ÷ 30 = 28.1 AZN/gün. 8 avadanlığa bölünür: <code>28.1 ÷ 8 = 3.51 AZN</code></p></div></div>
+        <div class="step"><div class="sn">2</div><div class="sc"><h4 data-t="s2h">Elektrik payı</h4><p data-t="s2p">Gündəlik 22 AZN, 8-ə bölünür: <code>22 ÷ 8 = 2.75 AZN</code></p></div></div>
+        <div class="step"><div class="sn">3</div><div class="sc"><h4 data-t="s3h">Su xərci</h4><p data-t="s3p">Avadanlıq lt-inə görə: <code>lt × 0.00125 AZN</code></p></div></div>
+        <div class="step"><div class="sn">4</div><div class="sc"><h4 data-t="s4h">Gündəlik xərc</h4><p><code>3.51 + 2.75 + su</code></p></div></div>
+        <div class="step"><div class="sn">5</div><div class="sc"><h4 data-t="s5h">Efir yağı çıxışı</h4><p><code>kq × 1000 × çıxış%/100</code></p></div></div>
+        <div class="step"><div class="sn">6</div><div class="sc"><h4 data-t="s6h">1 ml maya</h4><p><code>gündəlik_xərc ÷ oil_ml</code></p></div></div>
+        <div class="step"><div class="sn">7</div><div class="sc"><h4 data-t="s7h">1 kq maya</h4><p><code>1ml × 1000</code></p></div></div>
+      </div>
+      <div class="note" data-t="howNote">⚠️ <strong>Qeyd:</strong> Çıxış faizləri real istehsal məlumatları əsasında hesablanıb. İşçi maaşı sabit xərc kimi bütün avadanlıqlara bərabər bölünür.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 data-t="shareTitle">Hesabat Paylaşımı</h3>
+      <button class="btn-close" onclick="document.getElementById('shareModal').classList.remove('on')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <button class="mtab active" id="tabPng" onclick="switchTab('png')" data-t="tabPngLbl">📸 PNG</button>
+        <button class="mtab" id="tabText" onclick="switchTab('text')" data-t="tabTextLbl">📋 Mətn</button>
+      </div>
+      <!-- PNG TAB -->
+      <div id="pngTab">
+        <canvas id="shareCanvas"></canvas>
+        <button class="btn-dl" id="btnDl" data-t="downloadBtn">⬇️ Yüklə (PNG)</button>
+      </div>
+      <!-- TEXT TAB -->
+      <div id="textTab" style="display:none">
+        <div class="text-preview" id="textPreview"></div>
+        <p class="copy-hint" data-t="copyHint">👆 Mətni seçib kopyalaya bilərsiniz</p>
+        <button class="btn-copy" id="btnCopy" onclick="copyText()">
+          <span>📋</span><span id="copyBtnText" data-t="copyBtn">Kopyala</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT CARD for PNG -->
+<div id="reportCard">
+  <div class="rc-head">
+    <div class="rc-title">🌿 Efir Yağı Maya Hesabatı</div>
+    <div class="rc-sub" id="rcDate"></div>
+  </div>
+  <div class="rc-body" id="rcBody"></div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────
+const PLANTS = [
+  {name:'Arizonik',      y:0.310},
+  {name:'Dafnə yarpağı',y:0.260},
+  {name:'Eldar şamı',   y:0.104},
+  {name:'Evkalipt',     y:0.799},
+  {name:'Kəklik otu',   y:0.723},
+  {name:'Kiparis',      y:1.333},
+  {name:'Leylandı',     y:0.279},
+  {name:'Limonik',      y:0.487},
+  {name:'Razyana',      y:0.300},
+  {name:'Rozmarin',     y:0.482},
+  {name:'Yarpız',       y:0.400},
+];
+const TANKS = [
+  {lt:300,kq:80},{lt:250,kq:67},{lt:200,kq:53},{lt:150,kq:40},{lt:100,kq:27}
+];
+
+// ── I18N ────────────────────────────────────────────
+const T = {
+  az:{
+    title:'Efir Yağı Maya Qiyməti', subtitle:'Real istehsal məlumatları əsasında',
+    newCalc:'Yeni Hesablama', addPlant:'Bitki əlavə et',
+    salesToggle:'💰 Satış qiyməti hesabla',
+    salePriceLbl:'Satış qiyməti (1 ml)', saleQtyLbl:'Satış miqdarı (ml)',
+    pCostLbl:'Maya xərci', pRevLbl:'Satış gəliri', pGainLbl:'Mənfəət / Zərər', pMarginLbl:'Gəlirlilik',
+    addToList:'+ Siyahıya əlavə et',
+    listTitle:'Hesablama Siyahısı',
+    thPlant:'Bitki', thTank:'Avadanlıq', thOil:'Çıxış (ml)', thQty:'Miqdar (ml)', th1ml:'1ml (AZN)', thTotal:'Cəmi (AZN)',
+    emptyText:'Hələ hesablama əlavə edilməyib.',
+    grandLbl:'Ümumi Cəm', clearBtn:'🗑 Təmizlə',
+    sharePng:'PNG Paylaş', shareText:'Mətn Kopyala',
+    howTitle:'Hesablama Qaydası',
+    s1h:'İşçi maaşı payı', s1p:'Aylıq 842 ÷ 30 = 28.1 AZN/gün. 8 avadanlığa bölünür: 28.1 ÷ 8 = 3.51 AZN',
+    s2h:'Elektrik payı', s2p:'Gündəlik 22 AZN, 8-ə bölünür: 22 ÷ 8 = 2.75 AZN',
+    s3h:'Su xərci', s3p:'Avadanlıq lt-inə görə: lt × 0.00125 AZN',
+    s4h:'Gündəlik xərc', s5h:'Efir yağı çıxışı', s6h:'1 ml maya', s7h:'1 kq maya',
+    howNote:'⚠️ Qeyd: Çıxış faizləri real istehsal məlumatları əsasında hesablanıb.',
+    shareTitle:'Hesabat Paylaşımı', tabPngLbl:'📸 PNG', tabTextLbl:'📋 Mətn',
+    downloadBtn:'⬇️ Yüklə (PNG)', copyHint:'👆 Mətni seçib kopyalaya bilərsiniz',
+    copyBtn:'Kopyala', copiedBtn:'✓ Kopyalandı!',
+    plantLbl:'Bitki', tankLbl:'Avadanlıq', qtyLbl:'Miqdar (ml)',
+    rowLabel:'Sətir', removeRow:'Sil',
+    reportTitle:'🌿 Efir Yağı Maya Hesabatı',
+    reportItem:'Bitki', reportTank:'Avadanlıq', reportQty:'Miqdar',
+    reportCost:'Maya qiyməti', reportSale:'Satış qiyməti', reportProfit:'Qazanc',
+    reportTotal:'Ümumi cəm', reportDate:'Tarix',
+    perMl:'1ml maya', perKg:'1kq maya',
+  },
+  en:{
+    title:'Essential Oil Cost Calculator', subtitle:'Based on real production data',
+    newCalc:'New Calculation', addPlant:'Add plant',
+    salesToggle:'💰 Calculate selling price',
+    salePriceLbl:'Sale price (per ml)', saleQtyLbl:'Sale quantity (ml)',
+    pCostLbl:'Production cost', pRevLbl:'Sales revenue', pGainLbl:'Profit / Loss', pMarginLbl:'Margin',
+    addToList:'+ Add to list',
+    listTitle:'Calculation List',
+    thPlant:'Plant', thTank:'Equipment', thOil:'Output (ml)', thQty:'Qty (ml)', th1ml:'1ml (AZN)', thTotal:'Total (AZN)',
+    emptyText:'No calculations added yet.',
+    grandLbl:'Grand Total', clearBtn:'🗑 Clear',
+    sharePng:'Share PNG', shareText:'Copy Text',
+    howTitle:'How It Works',
+    s1h:'Salary share', s1p:'Monthly 842 ÷ 30 = 28.1 AZN/day, divided by 8 units: 3.51 AZN each',
+    s2h:'Electricity share', s2p:'Daily 22 AZN divided by 8: 2.75 AZN each',
+    s3h:'Water cost', s3p:'Proportional to tank size: lt × 0.00125 AZN',
+    s4h:'Daily cost', s5h:'Oil output', s6h:'Cost per ml', s7h:'Cost per kg',
+    howNote:'⚠️ Note: Yield percentages are based on real production data.',
+    shareTitle:'Share Report', tabPngLbl:'📸 PNG', tabTextLbl:'📋 Text',
+    downloadBtn:'⬇️ Download (PNG)', copyHint:'👆 Select text to copy',
+    copyBtn:'Copy', copiedBtn:'✓ Copied!',
+    plantLbl:'Plant', tankLbl:'Equipment', qtyLbl:'Quantity (ml)',
+    rowLabel:'Row', removeRow:'Remove',
+    reportTitle:'🌿 Essential Oil Cost Report',
+    reportItem:'Plant', reportTank:'Equipment', reportQty:'Quantity',
+    reportCost:'Cost price', reportSale:'Sale price', reportProfit:'Profit',
+    reportTotal:'Grand total', reportDate:'Date',
+    perMl:'1ml cost', perKg:'1kg cost',
+  },
+  ru:{
+    title:'Калькулятор себестоимости', subtitle:'На основе реальных данных производства',
+    newCalc:'Новый расчёт', addPlant:'Добавить растение',
+    salesToggle:'💰 Рассчитать цену продажи',
+    salePriceLbl:'Цена продажи (за мл)', saleQtyLbl:'Объём продажи (мл)',
+    pCostLbl:'Себестоимость', pRevLbl:'Выручка', pGainLbl:'Прибыль / Убыток', pMarginLbl:'Рентабельность',
+    addToList:'+ Добавить в список',
+    listTitle:'Список расчётов',
+    thPlant:'Растение', thTank:'Оборудование', thOil:'Выход (мл)', thQty:'Кол-во (мл)', th1ml:'1мл (AZN)', thTotal:'Итого (AZN)',
+    emptyText:'Расчёты ещё не добавлены.',
+    grandLbl:'Общий итог', clearBtn:'🗑 Очистить',
+    sharePng:'Поделиться PNG', shareText:'Копировать текст',
+    howTitle:'Методика расчёта',
+    s1h:'Доля зарплаты', s1p:'842 ÷ 30 = 28.1 AZN/день, делится на 8: 3.51 AZN на единицу',
+    s2h:'Доля электричества', s2p:'22 AZN/день делится на 8: 2.75 AZN',
+    s3h:'Расход воды', s3p:'По объёму ёмкости: л × 0.00125 AZN',
+    s4h:'Суточные затраты', s5h:'Выход масла', s6h:'Цена за мл', s7h:'Цена за кг',
+    howNote:'⚠️ Примечание: Процент выхода рассчитан на основе реальных данных.',
+    shareTitle:'Поделиться отчётом', tabPngLbl:'📸 PNG', tabTextLbl:'📋 Текст',
+    downloadBtn:'⬇️ Скачать (PNG)', copyHint:'👆 Выберите текст для копирования',
+    copyBtn:'Копировать', copiedBtn:'✓ Скопировано!',
+    plantLbl:'Растение', tankLbl:'Оборудование', qtyLbl:'Количество (мл)',
+    rowLabel:'Строка', removeRow:'Удалить',
+    reportTitle:'🌿 Отчёт себестоимости эфирного масла',
+    reportItem:'Растение', reportTank:'Оборудование', reportQty:'Кол-во',
+    reportCost:'Себестоимость', reportSale:'Цена продажи', reportProfit:'Прибыль',
+    reportTotal:'Итого', reportDate:'Дата',
+    perMl:'Цена за 1мл', perKg:'Цена за 1кг',
+  }
+};
+
+// Auto-detect language
+let lang = 'az';
+const bl = navigator.language || navigator.userLanguage || '';
+if(bl.startsWith('ru')) lang='ru';
+else if(bl.startsWith('en')) lang='en';
+else lang='az';
+
+function t(key){ return T[lang][key]||T['az'][key]||key; }
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
+  applyTranslations();
+  renderAllMiniResults();
+  renderList();
+}
+
+function applyTranslations(){
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const key=el.getAttribute('data-t');
+    const val=t(key);
+    if(el.tagName==='INPUT'&&el.type!=='checkbox') el.placeholder=val;
+    else el.textContent=val;
+  });
+}
+
+// ── UTILS ───────────────────────────────────────────
+const dc = lt => 3.5125 + 2.75 + lt * 0.00125;
+const oilMl = (kq,y) => kq * 1000 * (y/100);
+const f2 = n => parseFloat(n).toFixed(2);
+const f4 = n => n < 1 ? parseFloat(n).toFixed(4) : parseFloat(n).toFixed(2);
+
+// ── PLANT ROWS ──────────────────────────────────────
+let rowCount = 0;
+
+function buildPlantOptions(sel, selectedIdx){
+  sel.innerHTML = `<option value="">— ${t('plantLbl')} —</option>`;
+  PLANTS.forEach((p,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=p.name; if(i==selectedIdx) o.selected=true; sel.appendChild(o); });
+}
+function buildTankOptions(sel, selectedIdx){
+  sel.innerHTML = `<option value="">— ${t('tankLbl')} —</option>`;
+  TANKS.forEach((t2,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=`${t2.lt} lt (${t2.kq} kq) — ${f2(dc(t2.lt))} AZN/gün`; if(i==selectedIdx) o.selected=true; sel.appendChild(o); });
+}
+
+function addPlantRow(){
+  rowCount++;
+  const id = rowCount;
+  const div = document.createElement('div');
+  div.className='plant-row'; div.dataset.rowId=id;
+  div.innerHTML=`
+    <div class="plant-row-head">
+      <span class="row-num">${t('rowLabel')} ${id}</span>
+      ${id>1?`<button class="btn-remove-row" onclick="removeRow(${id})">✕</button>`:''}
+    </div>
+    <div class="plant-row-grid">
+      <div class="fg"><label class="flabel" data-t="plantLbl">${t('plantLbl')}</label>
+        <div class="sw"><select class="plant-sel" data-row="${id}" onchange="calcRow(${id})"></select></div>
+      </div>
+      <div class="fg"><label class="flabel" data-t="tankLbl">${t('tankLbl')}</label>
+        <div class="sw"><select class="tank-sel" data-row="${id}" onchange="calcRow(${id})"></select></div>
+      </div>
+    </div>
+    <div class="mini-res" id="miniRes${id}">
+      <div class="mrow"><span class="ml" data-t="thOil">${t('thOil')}</span><span class="mv" id="mOil${id}">—</span></div>
+      <div class="mrow"><span class="ml">${t('perMl')}</span><span class="mv g" id="mCml${id}">—</span></div>
+      <div class="mrow"><span class="ml">${t('perKg')}</span><span class="mv g" id="mCkg${id}">—</span></div>
+    </div>
+    <div class="qty-row">
+      <div class="fg"><label class="flabel" data-t="qtyLbl">${t('qtyLbl')}</label>
+        <input type="number" class="qty-inp" id="qty${id}" data-row="${id}" placeholder="ml" min="0" step="1" oninput="calcRow(${id});checkAddBtn()">
+      </div>
+    </div>
+  `;
+  document.getElementById('plantRows').appendChild(div);
+  buildPlantOptions(div.querySelector('.plant-sel'));
+  buildTankOptions(div.querySelector('.tank-sel'));
+  checkAddBtn();
+}
+
+function removeRow(id){
+  const el=document.querySelector(`.plant-row[data-row-id="${id}"]`);
+  if(el) el.remove();
+  checkAddBtn();
+}
+
+function calcRow(id){
+  const row=document.querySelector(`.plant-row[data-row-id="${id}"]`);
+  if(!row) return;
+  const pi=row.querySelector('.plant-sel').value;
+  const ti=row.querySelector('.tank-sel').value;
+  const mr=document.getElementById(`miniRes${id}`);
+  if(pi===''||ti===''){ mr.classList.remove('on'); return; }
+  const plant=PLANTS[+pi], tank=TANKS[+ti];
+  const cost=dc(tank.lt), ml=oilMl(tank.kq,plant.y), cml=cost/ml;
+  document.getElementById(`mOil${id}`).textContent=f2(ml)+' ml';
+  document.getElementById(`mCml${id}`).textContent=f4(cml)+' AZN';
+  document.getElementById(`mCkg${id}`).textContent=f2(cml*1000)+' AZN';
+  mr.classList.add('on');
+  checkAddBtn();
+  updateProfit();
+}
+
+function renderAllMiniResults(){
+  document.querySelectorAll('.plant-row').forEach(row=>{
+    const id=+row.dataset.rowId;
+    buildPlantOptions(row.querySelector('.plant-sel'), row.querySelector('.plant-sel').value);
+    buildTankOptions(row.querySelector('.tank-sel'), row.querySelector('.tank-sel').value);
+    calcRow(id);
+  });
+}
+
+function checkAddBtn(){
+  const btn=document.getElementById('btnAddList');
+  const rows=document.querySelectorAll('.plant-row');
+  let ok=false;
+  rows.forEach(row=>{
+    const id=+row.dataset.rowId;
+    const pi=row.querySelector('.plant-sel').value;
+    const ti=row.querySelector('.tank-sel').value;
+    const qty=parseFloat(document.getElementById(`qty${id}`)?.value)||0;
+    if(pi!==''&&ti!==''&&qty>0) ok=true;
+  });
+  btn.disabled=!ok;
+}
+
+// ── SALES ───────────────────────────────────────────
+document.getElementById('salesChk').addEventListener('change',function(){
+  document.getElementById('salesSec').classList.toggle('on',this.checked);
+  if(!this.checked) document.getElementById('profitBox').style.display='none';
+});
+
+function updateProfit(){
+  if(!document.getElementById('salesChk').checked) return;
+  const sp=parseFloat(document.getElementById('salePrice').value)||0;
+  const sq=parseFloat(document.getElementById('saleQty').value)||0;
+  const pb=document.getElementById('profitBox');
+  // total cost from all rows
+  let totalCost=0;
+  document.querySelectorAll('.plant-row').forEach(row=>{
+    const id=+row.dataset.rowId;
+    const pi=row.querySelector('.plant-sel').value;
+    const ti=row.querySelector('.tank-sel').value;
+    const qty=parseFloat(document.getElementById(`qty${id}`)?.value)||0;
+    if(pi!==''&&ti!==''&&qty>0){
+      const cost=dc(TANKS[+ti].lt), ml=oilMl(TANKS[+ti].kq,PLANTS[+pi].y);
+      totalCost+=(cost/ml)*qty;
+    }
+  });
+  if(!sp||!sq||totalCost===0){ pb.style.display='none'; return; }
+  const rev=sp*sq, gain=rev-totalCost, margin=rev>0?(gain/rev*100):0;
+  document.getElementById('pCost').textContent=f2(totalCost)+' AZN';
+  document.getElementById('pRev').textContent=f2(rev)+' AZN';
+  document.getElementById('pGain').textContent=(gain>=0?'+':'')+f2(gain)+' AZN';
+  document.getElementById('pMargin').textContent=f2(margin)+'%';
+  document.getElementById('pGainRow').className='profit-row '+(gain>=0?'gain':'loss');
+  pb.style.display='block';
+}
+
+// ── LIST ────────────────────────────────────────────
+let listRows=[];
+
+function addToList(){
+  document.querySelectorAll('.plant-row').forEach(row=>{
+    const id=+row.dataset.rowId;
+    const pi=row.querySelector('.plant-sel').value;
+    const ti=row.querySelector('.tank-sel').value;
+    const qty=parseFloat(document.getElementById(`qty${id}`)?.value)||0;
+    if(pi===''||ti===''||qty<=0) return;
+    const plant=PLANTS[+pi], tank=TANKS[+ti];
+    const cost=dc(tank.lt), ml=oilMl(tank.kq,plant.y), cml=cost/ml;
+    const sp=document.getElementById('salesChk').checked?(parseFloat(document.getElementById('salePrice').value)||0):0;
+    listRows.push({plant:plant.name, tank:tank.lt+'lt', kq:tank.kq, ml:f2(ml), qty, cml, total:cml*qty, salePrice:sp});
+  });
+  renderList();
+  // reset qty fields
+  document.querySelectorAll('.qty-inp').forEach(i=>i.value='');
+  document.getElementById('profitBox').style.display='none';
+  checkAddBtn();
+}
+
+function renderList(){
+  const tbody=document.getElementById('listBody');
+  const empty=document.getElementById('emptyState');
+  const sb=document.getElementById('sumBar');
+  const shb=document.getElementById('shareBar');
+  tbody.innerHTML='';
+  if(listRows.length===0){ empty.style.display='block'; sb.classList.remove('on'); shb.style.display='none'; return; }
+  empty.style.display='none'; sb.classList.add('on'); shb.style.display='flex';
+  let grand=0;
+  listRows.forEach((r,i)=>{
+    grand+=r.total;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="tag">${r.plant}</span></td><td><span class="tag tag-b">${r.tank}</span></td><td>${r.ml}</td><td>${r.qty}</td><td>${f4(r.cml)}</td><td><strong>${f2(r.total)}</strong></td><td><button class="btn-del" data-i="${i}">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('grandTotal').textContent=f2(grand)+' AZN';
+  document.querySelectorAll('.btn-del').forEach(b=>b.addEventListener('click',()=>{ listRows.splice(+b.dataset.i,1); renderList(); }));
+}
+
+function clearList(){ listRows=[]; renderList(); }
+
+// ── SHARE ───────────────────────────────────────────
+let shareMode='png';
+
+function openShare(mode){
+  shareMode=mode;
+  document.getElementById('shareModal').classList.add('on');
+  switchTab(mode);
+}
+
+function switchTab(mode){
+  shareMode=mode;
+  document.getElementById('pngTab').style.display=mode==='png'?'block':'none';
+  document.getElementById('textTab').style.display=mode==='text'?'block':'none';
+  document.getElementById('tabPng').classList.toggle('active',mode==='png');
+  document.getElementById('tabText').classList.toggle('active',mode==='text');
+  if(mode==='png') buildPng();
+  else buildTextReport();
+}
+
+function buildPng(){
+  const now=new Date();
+  document.getElementById('rcDate').textContent=now.toLocaleDateString()+' — '+now.toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'});
+  let grand=0, html='';
+  listRows.forEach(r=>{
+    grand+=r.total;
+    html+=`<div class="rc-row"><span class="rc-lbl">${r.plant} · ${r.tank} · ${r.qty} ml</span><span class="rc-val">${f2(r.total)} AZN</span></div>`;
+  });
+  html+=`<div class="rc-foot"><span>${t('reportTotal')}</span><strong>${f2(grand)} AZN</strong></div>`;
+  document.getElementById('rcBody').innerHTML=html;
+  setTimeout(()=>{
+    html2canvas(document.getElementById('reportCard'),{scale:2,backgroundColor:'#fff',useCORS:true}).then(canvas=>{
+      const sc=document.getElementById('shareCanvas');
+      sc.width=canvas.width; sc.height=canvas.height; sc.style.width='100%';
+      sc.getContext('2d').drawImage(canvas,0,0);
+      document.getElementById('btnDl').onclick=()=>{
+        const a=document.createElement('a'); a.download='efir-yagi-hesabat.png'; a.href=canvas.toDataURL('image/png'); a.click();
+      };
+    });
+  },150);
+}
+
+function buildTextReport(){
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('az-AZ')+' '+now.toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'});
+  const sp=parseFloat(document.getElementById('salePrice').value)||0;
+  const sq=parseFloat(document.getElementById('saleQty').value)||0;
+  let grand=0;
+  let lines=[];
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push(`🌿 ${t('reportTitle')}`);
+  lines.push(`📅 ${t('reportDate')}: ${dateStr}`);
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━');
+  listRows.forEach((r,i)=>{
+    grand+=r.total;
+    lines.push('');
+    lines.push(`${i+1}. ${r.plant}`);
+    lines.push(`   ${t('reportTank')}: ${r.tank} (${r.kq} kq)`);
+    lines.push(`   ${t('thOil')}: ${r.ml} ml`);
+    lines.push(`   ${t('reportQty')}: ${r.qty} ml`);
+    lines.push(`   ${t('perMl')}: ${f4(r.cml)} AZN`);
+    lines.push(`   ${t('reportCost')}: ${f2(r.total)} AZN`);
+    if(r.salePrice>0){
+      const rev=r.salePrice*r.qty;
+      const gain=rev-r.total;
+      lines.push(`   ${t('reportSale')}: ${f2(rev)} AZN (${f2(r.salePrice)} AZN/ml)`);
+      lines.push(`   ${t('reportProfit')}: ${gain>=0?'+':''}${f2(gain)} AZN`);
+    }
+  });
+  lines.push('');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push(`💰 ${t('reportTotal')}: ${f2(grand)} AZN`);
+  if(sp>0&&sq>0){
+    const rev=sp*sq, gain=rev-grand;
+    lines.push(`📦 ${t('reportSale')}: ${f2(rev)} AZN`);
+    lines.push(`📈 ${t('reportProfit')}: ${gain>=0?'+':''}${f2(gain)} AZN`);
+  }
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━');
+  const txt=lines.join('\n');
+  document.getElementById('textPreview').textContent=txt;
+  document.getElementById('btnCopy').dataset.text=txt;
+}
+
+function copyText(){
+  const txt=document.getElementById('textPreview').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById('btnCopy');
+    const span=document.getElementById('copyBtnText');
+    span.textContent=t('copiedBtn');
+    btn.classList.add('copied');
+    setTimeout(()=>{ span.textContent=t('copyBtn'); btn.classList.remove('copied'); },2000);
+  }).catch(()=>{
+    // fallback
+    const sel=window.getSelection(); const range=document.createRange();
+    range.selectNodeContents(document.getElementById('textPreview'));
+    sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand('copy');
+  });
+}
+
+// ── INIT ────────────────────────────────────────────
+// Set active lang btn
+document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===lang.toUpperCase()));
+applyTranslations();
+addPlantRow(); // start with 1 row
+renderList();
+</script>
+</body>
+</html>
